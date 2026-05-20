@@ -32,10 +32,33 @@ public class CategoriasController : ControllerBase
         return Ok(categorias);
     }
 
-    [HttpPost]
+
+    [HttpDelete]  // Rota para deletar uma categoria
+    public async Task<ActionResult<int>> DeleteCategoria(int id)
+    {
+        var categorias = await _context.Categorias
+            .FirstOrDefaultAsync(c => c.Id == id);
+
+        if (categorias == null)
+        {
+            return BadRequest("Categoria não encontrada");
+        }
+        else
+        {
+            _context.Categorias.Remove(categorias);
+
+            await _context.SaveChangesAsync();
+
+            return Ok("Categoria deletada com sucesso");
+        }
+
+
+    }
+
+    [HttpPost] // Rota para criar uma nova categoria
     public async Task<ActionResult<CategoriaRespostaDto>> CriarCategoria(
     CriarCategoriaDto dto
-)
+    )
     {
 
         if (string.IsNullOrWhiteSpace(dto.Name))
@@ -73,4 +96,5 @@ public class CategoriasController : ControllerBase
             resposta
         );
     }
+
 }
